@@ -37,3 +37,16 @@ export async function deleteLocalFiles(files: Array<string>) {
     fs.unlinkSync(file);
   }
 }
+
+export async function deleteGeneratedFiles() {
+  fs.readdir(__dirname + '/tmp', async (err, files) => {
+    if (err) {
+      return console.log('Error: ' + err);
+  } 
+    const filePath: string[] = [];
+    files.forEach((file) => {
+      filePath.push(__dirname + '/tmp/' + file);
+    });
+    await deleteLocalFiles(filePath);
+  })
+}
