@@ -1,0 +1,17 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Create  group schema",
+    "required": ["name", "description"],
+    "properties": {
+      "name": {
+        "type": "string",
+        "title": "Group name"
+      },
+      "description": {
+        "type": "string",
+        "title": "Group description"
+      }
+    }
+  }
