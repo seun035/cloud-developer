@@ -25,16 +25,16 @@ export const handler = middy(
       const userId = getUserId(event);
       const todoId = event.pathParameters.todoId;
       
-      const todos = await getTodoForUser(userId, todoId);
+      const todo = await getTodoForUser(userId, todoId);
       logger.info('Successfully get todo')
 
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify(todos)
+        body: JSON.stringify(todo)
       }
     } catch (error) {
-        logger.error(`Error: ${error.message}`);
+        logger.info(`Error: ${error.message}`);
 
       return {
         statusCode: 500,

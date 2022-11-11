@@ -32,7 +32,7 @@ export const handler = middy(
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify(url)
+        body: JSON.stringify({uploadUrl: url})
       }
     } catch (error) {
       logger.error(`Error: ${error.message}`);

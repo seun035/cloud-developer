@@ -1,26 +1,27 @@
 import { CustomAuthorizerEvent, CustomAuthorizerResult } from 'aws-lambda'
 import 'source-map-support/register'
 
-import { verify, decode } from 'jsonwebtoken'
+import { verify } from 'jsonwebtoken'
 import { createLogger } from '../../utils/logger'
 //import Axios from 'axios'
 //import { Jwt } from '../../auth/Jwt'
+import { CertSigningKey } from 'jwks-rsa';
+import * as JwksRsa from 'jwks-rsa';
 import { JwtPayload } from '../../auth/JwtPayload'
 
 const logger = createLogger('auth')
-const cert = ``
 
 // TODO: Provide a URL that can be used to download a certificate that can be used
 // to verify JWT token signature.
 // To get this URL you need to go to an Auth0 page -> Show Advanced Settings -> Endpoints -> JSON Web Key Set
 //const jwksUrl = '...'
 
-export const handler =  (
+export const handler = async (
   event: CustomAuthorizerEvent
-): CustomAuthorizerResult => {
+): Promise<CustomAuthorizerResult> => {
   logger.info('Authorizing a user', event.authorizationToken)
   try {
-    const jwtToken = verifyToken(event.authorizationToken)
+    const jwtToken = await verifyToken(event.authorizationToken)
     logger.info('User was authorized', jwtToken)
 
     return {
@@ -37,7 +38,7 @@ export const handler =  (
       }
     }
   } catch (e) {
-    logger.error('User not authorized', { error: e.message })
+    logger.info('User not authorized', { error: e.message })
 
     return {
       principalId: 'user',
@@ -55,14 +56,22 @@ export const handler =  (
   }
 }
 
-function verifyToken(authHeader: string): JwtPayload {
+async function verifyToken(authHeader: string): Promise<JwtPayload> {
   const token = getToken(authHeader)
   //const jwt: Jwt = decode(token, { complete: true }) as Jwt
 //console.log(jwt)
   // TODO: Implement token verification
   // You should implement it similarly to how it was implemented for the exercise for the lesson 5
   // You can read more about how to do this here: https://auth0.com/blog/navigating-rs256-and-jwks/
-  let result = verify(token, cert, {algorithms: ['RS256']}) as JwtPayload
+
+  const client = JwksRsa({ jwksUri: 'https://dev-w2b6ce65sqmw3pea.us.auth0.com/.well-known/jwks.json' });
+  const kid = 'JIqzue93dDnHb7vSScvhm';
+  const certSigningKey = (await client.getSigningKey(kid)) as CertSigningKey;
+
+  logger.info('Begin user verification')
+  let result = verify(token, certSigningKey.getPublicKey(), {algorithms: ['RS256']}) as JwtPayload
+  logger.info(`End user verification ${JSON.stringify(result)}`)
+
   return result
 }
 

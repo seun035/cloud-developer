@@ -46,7 +46,7 @@ export const deleteTodo = (userId: string, todoId: string) => {
 
 export const createAttachmentPresignedUrl = async (userId: string, todoId: string): Promise<string> => {
 
-  const bucketName = process.env.IMAGES_S3_BUCKET;
+  const bucketName = process.env.ATTACHMENT_S3_BUCKET;
   const urlExpiration = parseInt(process.env.SIGNED_URL_EXPIRATION, 10);
   const signedUrl = AttachmentUtils(todoId, bucketName, urlExpiration)
   await todoAccess.saveImgUrl(userId, todoId, bucketName);

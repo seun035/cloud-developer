@@ -31,7 +31,7 @@ export const handler = middy(
         body: JSON.stringify('success')
       }
     } catch (error) {
-      logger.error(`Error: ${error.message}`);
+      logger.info(`Error: ${error.message}`);
       return {
         statusCode: 500,
         headers,

@@ -27,10 +27,10 @@ export const handler = middy(
       return {
         statusCode: 201,
         headers,
-        body: JSON.stringify(todo)
+        body: JSON.stringify({item: todo})
       }
     } catch (error) {
-      logger.error(`Error: ${error.message}`);
+      logger.info(`Error: ${error.message}`);
       return {
         statusCode: 500,
         headers,
